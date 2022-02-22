@@ -371,40 +371,25 @@ module Vector
 
                             for (int dimx_offset = 0; dimx_offset != num_of_divisions; ++dimx_offset)
                             {
-                                std::vector<CkArrayIndex2D> elems;
-                                elems.reserve(dimy);
-
                                 for (int y = 0; y != dimy; ++y)
                                 {
-                                    elems.emplace_back(initial_dimx + dimx_offset, y);
-                                }
+                                    part_vector_msg* msg = nullptr;
 
-                                CProxySection_Matrix sec =
-                                    CProxySection_Matrix::ckNew(pv.ckGetArrayID(), elems);
-
-                                using evec_t = Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>>;
-
-                                // Is this the very last element and it's not
-                                // fully aligned with the offset?
-                                if ((size - offset) / aum::sizes::block_size::value_c == 0)
-                                {
-                                    evec_t ev(vec.data() + offset, (size - offset));
-                                    
-                                    part_vector_msg* msg =
-                                        make_part_vector_msg(elems.size() * num_of_divisions, (size - offset), vec.data() + offset);
+                                    // Is this the very last element and it's not
+                                    // fully aligned with the offset?
+                                    if ((size - offset) / aum::sizes::block_size::value_c == 0)
+                                    {
+                                        msg =
+                                            make_part_vector_msg(dimy * num_of_divisions, (size - offset), vec.data() + offset);
+                                    }
+                                    else
+                                    {
+                                        msg =
+                                            make_part_vector_msg(dimy * num_of_divisions, aum::sizes::block_size::value_c, vec.data() + offset);
+                                    }
 
                                     CkSetRefNum(msg, matrix_tag);
-                                    sec.part_vector_for_mvm(msg);
-                                }
-                                else
-                                {
-                                    evec_t ev(vec.data() + offset, aum::sizes::block_size::value_c);
-
-                                    part_vector_msg* msg =
-                                        make_part_vector_msg(elems.size() * num_of_divisions, aum::sizes::block_size::value_c, vec.data() + offset);
-
-                                    CkSetRefNum(msg, matrix_tag);
-                                    sec.part_vector_for_mvm(msg);
+                                    pv(initial_dimx + dimx_offset, y).part_vector_for_mvm(msg);
                                 }
                                 
                                 offset += aum::sizes::block_size::value_c;
@@ -439,40 +424,25 @@ module Vector
 
                             for (int dimy_offset = 0; dimy_offset != num_of_divisions; ++dimy_offset)
                             {
-                                std::vector<CkArrayIndex2D> elems;
-                                elems.reserve(dimy);
-
                                 for (int x = 0; x != dimx; ++x)
                                 {
-                                    elems.emplace_back(x, initial_dimy + dimy_offset);
-                                }
+                                    part_vector_msg* msg = nullptr;
+                                    // Is this the very last element and it's not
+                                    // fully aligned with the offset?
+                                    if ((size - offset) / aum::sizes::block_size::value_r == 0)
+                                    {
+                                        msg =
+                                            make_part_vector_msg(dimx * num_of_divisions, (size - offset), vec.data() + offset);
+                                    }
+                                    else
+                                    {
+                                        msg =
+                                            make_part_vector_msg(dimx * num_of_divisions, aum::sizes::block_size::value_r, vec.data() + offset);
 
-                                CProxySection_Matrix sec =
-                                    CProxySection_Matrix::ckNew(pv.ckGetArrayID(), elems);
-
-                                using evec_t = Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>>;
-
-                                // Is this the very last element and it's not
-                                // fully aligned with the offset?
-                                if ((size - offset) / aum::sizes::block_size::value_r == 0)
-                                {
-                                    evec_t ev(vec.data() + offset, (size - offset));
-                                    
-                                    part_vector_msg* msg =
-                                        make_part_vector_msg(elems.size() * num_of_divisions, (size - offset), vec.data() + offset);
+                                    }
 
                                     CkSetRefNum(msg, matrix_tag);
-                                    sec.part_vector_for_vmm(msg);
-                                }
-                                else
-                                {
-                                    evec_t ev(vec.data() + offset, aum::sizes::block_size::value_r);
-
-                                    part_vector_msg* msg =
-                                        make_part_vector_msg(elems.size() * num_of_divisions, aum::sizes::block_size::value_r, vec.data() + offset);
-
-                                    CkSetRefNum(msg, matrix_tag);
-                                    sec.part_vector_for_vmm(msg);
+                                    pv(x, initial_dimy + dimy_offset).part_vector_for_vmm(msg);
                                 }
                                 
                                 offset += aum::sizes::block_size::value_r;
