@@ -98,6 +98,7 @@ public:
       , READ_TAG(0)
       , WRITE_TAG(0)
     {
+        ckout << "Cons call..." << endl;
         dimx = aum::sizes::block_size::value_c;
         dimy = aum::sizes::block_size::value_r;
 

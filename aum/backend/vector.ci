@@ -291,6 +291,7 @@ module Vector
                     {
                         serial "reduce_add"
                         {
+                            ckout << "Reduce Add on Index: " << thisIndex << endl;
                             using evec_t = Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>>;
 
                             evec_t e(vec.data(), vec.size());
@@ -349,6 +350,7 @@ module Vector
                     {
                         serial "send_for_matrix_vector_multiply"
                         {
+                            ckout << "Here" << endl;
                             int num_of_divisions = 
                                 size / aum::sizes::block_size::value_c;
                             
