@@ -33,16 +33,16 @@ public:
         aum::vector b{1000, aum::random{}};
         aum::vector x{1000, aum::random{}};
 
-        // aum::vector r = b - aum::dot(A, x);
+        aum::vector r = b - aum::dot(A, x);
         // aum::reduce_add(r).print_value();
         // // ckout << "Bottleneck found..." << endl;
-        // aum::vector p = aum::copy(r);
+        aum::vector p = aum::copy(r);
         // // aum::scalar rsold = aum::dot(r, r);
 
         aum::vector Ap = aum::dot(A, b);
 
-        // for (int i = 0; i != 1000; ++i)
-        //     Ap = aum::dot(A, b);
+        for (int i = 0; i != 1000; ++i)
+            Ap = aum::dot(A, b);
 
         aum::wait_and_exit(Ap, start);
     }

@@ -77,8 +77,6 @@ namespace aum {
             if (cols_ % aum::sizes::block_size::value_c != 0)
                 ++num_chares_x_;
 
-            ckout << num_chares_x_ << "," << num_chares_y_ << endl;
-
             proxy_ = CProxy_Matrix::ckNew(cols_, rows_, value, num_chares_x_,
                 num_chares_y_, num_chares_x_, num_chares_y_);
         }

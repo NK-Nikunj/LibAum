@@ -251,7 +251,16 @@ module Vector
                     {
                         serial "assemble_reduced"
                         {
-                            std::memcpy(&vec[offset], arr, size1 * sizeof(double));
+                            // Initialize to 0
+                            if (reduction_counter == 0)
+                                std::fill(vec.begin(), vec.end(), 0);
+                            
+                            using evec_t = Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>>;
+
+                            evec_t e(vec.data() + offset, size1);
+                            evec_t incoming(arr, size1);
+
+                            e += incoming;
 
                             // Operation is now complete - set up read facility
                             // on this data.
@@ -291,7 +300,6 @@ module Vector
                     {
                         serial "reduce_add"
                         {
-                            ckout << "Reduce Add on Index: " << thisIndex << endl;
                             using evec_t = Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>>;
 
                             evec_t e(vec.data(), vec.size());
@@ -350,7 +358,6 @@ module Vector
                     {
                         serial "send_for_matrix_vector_multiply"
                         {
-                            ckout << "Here" << endl;
                             int num_of_divisions = 
                                 size / aum::sizes::block_size::value_c;
                             
