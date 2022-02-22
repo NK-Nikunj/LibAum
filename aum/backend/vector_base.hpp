@@ -25,7 +25,32 @@ struct part_vector_msg
 {
     int red_count;
     int size;
+    double* local;
     double* arr;
+
+    static void* pack(part_vector_msg* msg)
+    {
+        if (msg->local != nullptr)
+        {
+            msg->arr = (double*) ((char*) msg +
+                ALIGN_DEFAULT(sizeof(part_vector_msg)));
+
+            std::copy(msg->local, msg->local + msg->size, msg->arr);
+            msg->local = nullptr;
+        }
+
+        // Set an offset to the array
+        msg->arr = (double*) ((char*) msg->arr - (char*) msg);
+
+        return msg;
+    }
+
+    static part_vector_msg* unpack(void* buf)
+    {
+        part_vector_msg* msg = (part_vector_msg*) buf;
+        msg->arr = (double*) ((size_t) msg->arr + (char*) msg);
+        return msg;
+    }
 };
 
 class Vector : public CBase_Vector
@@ -49,7 +74,9 @@ public:
         auto* msg = new (&size_) part_vector_msg();
         msg->red_count = red_count_;
         msg->size = size_;
-        std::copy(arr_, arr_ + size_, msg->arr);
+        msg->local = arr_;
+        msg->arr = arr_;
+        // std::copy(arr_, arr_ + size_, msg->arr);
         return msg;
     }
 

@@ -29,9 +29,9 @@ public:
         double start = CkWallTimer();
 
         // Initialized condition
-        aum::matrix A{1000, 1000, 1.};
-        aum::vector b{1000, aum::random{}};
-        aum::vector x{1000, aum::random{}};
+        aum::matrix A{3000, 3000, 1.};
+        aum::vector b{3000, aum::random{}};
+        aum::vector x{3000, aum::random{}};
 
         aum::vector r = b - aum::dot(A, x);
         aum::vector p = aum::copy(r);
