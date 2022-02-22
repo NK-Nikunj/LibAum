@@ -21,7 +21,6 @@ class Main : public CBase_Main
 public:
     Main(CkArgMsg* msg)
     {
-        double start = CkWallTimer();
         aum::vector A{1000000, 1.1};
         aum::vector B{1000000, 2.2};
         aum::vector C{1000000, 3.3};
@@ -35,6 +34,14 @@ public:
 
         // 1 temp to the right
         B = C + (A + D);
+
+        // Let's do some performance test
+        double start = CkWallTimer();
+
+        aum::vector v1{10000000, 1.};
+        aum::vector v2{10000000, 1.};
+
+        aum::vector vres = v1 + v2;
 
         aum::wait_and_exit(B, start);
     }

@@ -15,7 +15,7 @@
 #pragma once
 
 #ifndef AUM_ARRAY_SIZE
-#define AUM_ARRAY_SIZE 10000
+#define AUM_ARRAY_SIZE 1000000
 #endif
 
 #ifndef AUM_BLOCK_ROW_SIZE
