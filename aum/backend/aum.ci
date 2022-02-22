@@ -28,6 +28,8 @@ module libaum
     {
         double mat[];
     };
+
+    message tagged_msg;
  
     extern module Exitter;
 
