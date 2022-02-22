@@ -14,37 +14,38 @@
 
 #include <aum/aum.hpp>
 
-#include "scalar_multiply.decl.h"
+#include "multi_dot.decl.h"
 
 class Main : public CBase_Main
 {
 public:
     Main(CkArgMsg* msg)
     {
+        thisProxy.benchmark();
+    }
+
+    void benchmark()
+    {
         double start = CkWallTimer();
-        aum::matrix A{1010, 1050, 1.};
-        aum::matrix B{1010, 1050, 2.};
 
-        // No temporaries
-        aum::scalar s{5.0};
+        // Initialized condition
+        aum::matrix A{1000, 1000, 1.};
+        aum::vector b{1000, aum::random{}};
+        aum::vector x{1000, aum::random{}};
 
-        B = 5 * A;
+        // aum::vector r = b - aum::dot(A, x);
+        // aum::reduce_add(r).print_value();
+        // // ckout << "Bottleneck found..." << endl;
+        // aum::vector p = aum::copy(r);
+        // // aum::scalar rsold = aum::dot(r, r);
 
-        B = s * A;
+        aum::vector Ap = aum::dot(A, b);
 
-        A = 5 * (A - B);
+        // for (int i = 0; i != 1000; ++i)
+        //     Ap = aum::dot(A, b);
 
-        aum::matrix C{1010, 1050, 1.};
-        aum::vector a{1050, 2.};
-        aum::vector v = aum::dot(C, a);
-
-        // aum::vector b{1010, 2.};
-        // aum::vector y = aum::dot(b, C);
-
-        double val = aum::reduce_add(v).get();
-
-        aum::wait_and_exit(v, start);
+        aum::wait_and_exit(Ap, start);
     }
 };
 
-#include "scalar_multiply.def.h"
+#include "multi_dot.def.h"

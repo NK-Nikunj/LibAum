@@ -180,7 +180,7 @@ module Matrix
                     when
                         aum_scalar_multiply[WRITE_TAG](int write_tag),
                         input_matrix_1[WRITE_TAG](int write_tag, int dimx1, int dimy1, int size1, double arr1[size1]),
-                        input_matrix_1[WRITE_TAG](int write_tag, double value)
+                        input_scalar[WRITE_TAG](int write_tag, double value)
                     {
                         serial "aum_scalar_multiply"
                         {
@@ -353,7 +353,7 @@ module Matrix
         entry void aum_scalar_multiply(int);
         entry void matrix_vector_multiply(int, int, CProxy_Vector);
         entry void vector_matrix_multiply(int, int, CProxy_Vector);
-        entry void input_matrix_1(int, double);
+        entry void input_scalar(int, double);
         entry void input_matrix_1(int, int, int, int size, double arr[size]);
         entry void input_matrix_2(int, int, int, int size, double arr[size]);
         entry void part_vector_for_mvm(part_vector_msg*);

@@ -227,7 +227,7 @@ module Vector
                     when
                         aum_scalar_multiply[WRITE_TAG](int write_tag),
                         input_vector_1[WRITE_TAG](int write_tag, int size1, double arr[size1]),
-                        input_vector_1[WRITE_TAG](int write_tag, double value)
+                        input_scalar[WRITE_TAG](int write_tag, double value)
                     {
                         serial "aum_scalar_multiply"
                         {
@@ -271,7 +271,7 @@ module Vector
                     // other container.
                     when
                         copy_value[WRITE_TAG](int write_tag),
-                        receive_underlying[WRITE_TAG](int write_tag, int size1, double arr[size1])
+                        input_vector_1[WRITE_TAG](int write_tag, int size1, double arr[size1])
                     {
                         serial "copy_value"
                         {
@@ -304,18 +304,6 @@ module Vector
                             // itself, we consider this operation as a read and
                             // not a write.
                             ++WRITE_TAG;
-                        }
-                    }
-
-                    // Operation send_underlying:
-                    // Helper function to send the underlying vector
-                    // for copying
-                    when
-                        send_underlying[READ_TAG](int read_tag, int write_tag, CProxy_Vector pv)
-                    {
-                        serial "send_underlying"
-                        {
-                            pv[thisIndex].receive_underlying(write_tag, vec.size(), vec.data());
                         }
                     }
 
@@ -465,7 +453,7 @@ module Vector
                                         make_part_vector_msg(elems.size() * num_of_divisions, (size - offset), vec.data() + offset);
 
                                     CkSetRefNum(msg, matrix_tag);
-                                    sec.part_vector_for_mvm(msg);
+                                    sec.part_vector_for_vmm(msg);
                                 }
                                 else
                                 {
@@ -475,7 +463,7 @@ module Vector
                                         make_part_vector_msg(elems.size() * num_of_divisions, aum::sizes::block_size::value_r, vec.data() + offset);
 
                                     CkSetRefNum(msg, matrix_tag);
-                                    sec.part_vector_for_mvm(msg);
+                                    sec.part_vector_for_vmm(msg);
                                 }
                                 
                                 offset += aum::sizes::block_size::value_r;
@@ -540,9 +528,7 @@ module Vector
         entry void assemble_reduced(int, int, int size, double arr[size], int);
         entry void copy_value(int);
         entry void reduce_add(int, int, CProxy_Scalar);
-        entry void receive_underlying(int, int size, double arr[size]);
-        entry void send_underlying(int, int, CProxy_Vector);
-        entry void input_vector_1(int, double);
+        entry void input_scalar(int, double);
         entry void input_vector_1(int, int size, double arr[size]);
         entry void input_vector_2(int, int size, double arr[size]);
         entry void send_to_1(int, int, CProxy_Vector);
