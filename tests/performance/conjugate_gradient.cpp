@@ -29,15 +29,15 @@ public:
         double start = CkWallTimer();
 
         // Initialized condition
-        aum::matrix A{1000, 1000, 1.};
-        aum::vector b{1000, aum::random{}};
-        aum::vector x{1000, aum::random{}};
+        aum::matrix A{3000, 3000, 1.};
+        aum::vector b{3000, aum::random{}};
+        aum::vector x{3000, aum::random{}};
 
         aum::vector r = b - aum::dot(A, x);
         aum::vector p = aum::copy(r);
         aum::scalar rsold = aum::dot(r, r);
 
-        for (int i = 0; i != 1000; ++i)
+        for (int i = 0; i != 100; ++i)
         {
             aum::vector Ap = aum::dot(A, p);
             aum::scalar alpha = rsold / aum::dot(p, Ap);

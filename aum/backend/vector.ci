@@ -73,19 +73,11 @@ module Vector
 
                             // Pointers were shared!
                             if (!msg1->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg1->tag);
-                                msg1->cb.send(t_msg);
-                            }
+                                msg1->cb.send();
 
                             // Pointers were shared!
                             if (!msg2->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg2->tag);
-                                msg2->cb.send(t_msg);
-                            }
+                                msg2->cb.send();
                         }
                     }
 
@@ -113,11 +105,7 @@ module Vector
 
                             // Pointers were shared!
                             if (!msg->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg->tag);
-                                msg->cb.send(t_msg);
-                            }
+                                msg->cb.send();
                         }
                     }
 
@@ -148,19 +136,11 @@ module Vector
 
                             // Pointers were shared!
                             if (!msg1->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg1->tag);
-                                msg1->cb.send(t_msg);
-                            }
+                                msg1->cb.send();
 
                             // Pointers were shared!
                             if (!msg2->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg2->tag);
-                                msg2->cb.send(t_msg);
-                            }
+                                msg2->cb.send();
                         }
                     }
 
@@ -191,11 +171,7 @@ module Vector
 
                             // Pointers were shared!
                             if (!msg->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg->tag);
-                                msg->cb.send(t_msg);
-                            }
+                                msg->cb.send();
                         }
                     }
 
@@ -224,11 +200,7 @@ module Vector
 
                             // Pointers were shared!
                             if (!msg->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg->tag);
-                                msg->cb.send(t_msg);
-                            }
+                                msg->cb.send();
                         }
                     }
 
@@ -278,11 +250,7 @@ module Vector
 
                             // Pointers were shared!
                             if (!msg->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg->tag);
-                                msg->cb.send(t_msg);
-                            }
+                                msg->cb.send();
                         }
                     }
 
@@ -309,11 +277,7 @@ module Vector
 
                             // Pointers were shared!
                             if (!msg->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg->tag);
-                                msg->cb.send(t_msg);
-                            }
+                                msg->cb.send();
                         }
                     }
 
@@ -365,11 +329,7 @@ module Vector
 
                             // Pointers were shared!
                             if (!msg->cb.isInvalid())
-                            {
-                                tagged_msg* t_msg = new tagged_msg();
-                                CkSetRefNum(t_msg, msg->tag);
-                                msg->cb.send(t_msg);
-                            }
+                                msg->cb.send();
                         }
                     }
 
@@ -400,7 +360,7 @@ module Vector
                     // Callback function called when a send function sends a
                     // pointer instead of actual data. Required for the fulfillment
                     // of a read contract.
-                    when update_read[READ_TAG](tagged_msg*)
+                    when update_read()
                     {
                         serial "update_read"
                         {
@@ -428,7 +388,7 @@ module Vector
                             int homePe = dest_branch->homePe(pv[thisIndex].ckGetIndex());
 
                             if (CkNodeOf(homePe) == CkMyNode())
-                                msg->cb = CkCallback(CkIndex_Vector::update_read(NULL), thisProxy[thisIndex]);
+                                msg->cb = CkCallback(CkIndex_Vector::update_read(), thisProxy[thisIndex]);
                             else
                                 ++WRITE_TAG;    // Copy is already being made. Safe to update reads!
 
@@ -454,7 +414,7 @@ module Vector
                             int homePe = dest_branch->homePe(pv[thisIndex].ckGetIndex());
 
                             if (CkNodeOf(homePe) == CkMyNode())
-                                msg->cb = CkCallback(CkIndex_Vector::update_read(NULL), thisProxy[thisIndex]);
+                                msg->cb = CkCallback(CkIndex_Vector::update_read(), thisProxy[thisIndex]);
                             else
                                 ++WRITE_TAG;    // Copy is already being made. Safe to update reads!
 
@@ -628,7 +588,7 @@ module Vector
         entry void send_to_2(int, int, CProxy_Vector);
         entry void send_for_matrix_vector_multiply(int, int, int, int, CProxy_Matrix);
         entry void send_for_vector_matrix_multiply(int, int, int, int, CProxy_Matrix);
-        entry void update_read(tagged_msg*);
+        entry void update_read();
         entry void print_value(int, std::string const&);
         entry void exit(int);
         entry void exit(int, double, CProxy_Exitter);

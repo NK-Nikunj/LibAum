@@ -29,20 +29,17 @@ public:
         double start = CkWallTimer();
 
         // Initialized condition
-        aum::matrix A{1000, 1000, 1.};
-        aum::vector b{1000, aum::random{}};
-        aum::vector x{1000, aum::random{}};
+        aum::matrix A{3000, 3000, 1.};
+        aum::vector p{3000, aum::random{}};
 
-        aum::vector r = b - aum::dot(A, x);
-        // aum::reduce_add(r).print_value();
-        // // ckout << "Bottleneck found..." << endl;
-        aum::vector p = aum::copy(r);
-        // // aum::scalar rsold = aum::dot(r, r);
+        aum::vector Ap = aum::dot(A, p);
 
-        aum::vector Ap = aum::dot(A, b);
-
-        for (int i = 0; i != 1000; ++i)
-            Ap = aum::dot(A, b);
+        for (int i = 0; i != 100; ++i)
+        {
+            ckout << "Index: " << i << ", val: " << aum::reduce_add(Ap).get()
+                  << endl;
+            Ap = aum::dot(A, p);
+        }
 
         aum::wait_and_exit(Ap, start);
     }
