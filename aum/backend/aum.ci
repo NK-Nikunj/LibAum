@@ -28,7 +28,11 @@ module libaum
     {
         double mat[];
     };
+<<<<<<< HEAD
 
+=======
+ 
+>>>>>>> main
     extern module Exitter;
 
     extern module Scalar;
