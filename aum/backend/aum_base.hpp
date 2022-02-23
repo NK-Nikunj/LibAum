@@ -16,10 +16,6 @@
 
 #include "libaum.decl.h"
 
-struct tagged_msg : CMessage_tagged_msg
-{
-};
-
 struct vector_msg : CMessage_vector_msg
 {
     int size;
