@@ -55,7 +55,8 @@ public:
                 break;
             }
 
-            p = r + (rsnew / rsold) * p;
+            // p = r + (rsnew / rsold) * p;
+            p = aum::blas::axpy(rsnew / rsold, p, r);
             rsold = aum::copy(rsnew);
         }
 
