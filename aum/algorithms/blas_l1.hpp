@@ -33,7 +33,7 @@ namespace aum { namespace blas {
 
         a.send_to_vector(w_tag, result);
         x.send_to_1(w_tag, result);
-        y.send_to_1(w_tag, result);
+        y.send_to_2(w_tag, result);
         result.proxy().axpy(w_tag, 1.);
         result.update_tags();
 
@@ -52,7 +52,7 @@ namespace aum { namespace blas {
 
         a.send_to_vector(w_tag, result);
         x.send_to_1(w_tag, result);
-        y.send_to_1(w_tag, result);
+        y.send_to_2(w_tag, result);
         result.proxy().axpy(w_tag, multiplier);
         result.update_tags();
 
@@ -70,7 +70,7 @@ namespace aum { namespace blas {
         int w_tag = result.write_tag();
 
         x.send_to_1(w_tag, result);
-        y.send_to_1(w_tag, result);
+        y.send_to_2(w_tag, result);
         result.proxy().axpy_scalar(w_tag, a);
         result.update_tags();
 

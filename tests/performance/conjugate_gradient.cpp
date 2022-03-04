@@ -44,7 +44,6 @@ public:
 
             x = aum::blas::axpy(alpha, p, x);
             r = aum::blas::axpy(-1., alpha, Ap, r);
-            // r = r - (alpha * Ap);
 
             aum::scalar rsnew = aum::dot(r, r);
 
@@ -55,9 +54,8 @@ public:
                 break;
             }
 
-            // p = r + (rsnew / rsold) * p;
             p = aum::blas::axpy(rsnew / rsold, p, r);
-            rsold = aum::copy(rsnew);
+            rsold = rsnew;
         }
 
         aum::wait_and_exit(r, start);
