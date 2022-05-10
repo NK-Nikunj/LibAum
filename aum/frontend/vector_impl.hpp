@@ -198,4 +198,16 @@ namespace aum {
         return result;
     }
 
+    vector operator/(vector const& v1, double value)
+    {
+        vector result{v1.size()};
+
+        int w_tag = result.write_tag();
+        v1.send_to_1(w_tag, result);
+        result.proxy().scalar_divide(w_tag, value);
+        result.update_tags();
+
+        return result;
+    }
+
 }    // namespace aum

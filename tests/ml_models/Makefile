@@ -1,47 +1,37 @@
 #  Copyright (C) 2022 Nikunj Gupta
-# 
+#
 #  This program is free software: you can redistribute it and/or modify it
 #  under the terms of the GNU General Public License as published by the Free
 #   Software Foundation, version 3.
-# 
+#
 #  This program is distributed in the hope that it will be useful, but WITHOUT
 #  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
 #  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for
 #  more details.
-# 
+#
 #  You should have received a copy of the GNU General Public License along
 # with this program. If not, see <https://www.gnu.org/licenses/>.
 
-include ../Makefile.common
+include ../../Makefile.common
 
 TEST_DIR=$(BASE_DIR)/../tests
 LIBS_DIR=$(BASE_DIR)
 
-all: blas matrix ml_models performance vector scalar
+all: logistic perceptron svm
 
-.PHONY: blas matrix ml_models performance vector scalar clean
+.PHONY: clean logistic perceptron
 
-blas:
-	cd blas; make
+ml: ml.ci
+	$(CHARMC) -E ml.ci
 
-matrix:
-	cd matrix; make
+logistic: logistic.cpp ml
+	$(CHARMC) $< -L$(LIBS_DIR)/aum -laum -I$(BASE_DIR) -I$(BASE_DIR)/aum/backend -o $@.out $(OPTS)
 
-ml_models:
-	cd ml_models; make
+perceptron: perceptron.cpp ml
+	$(CHARMC) $< -L$(LIBS_DIR)/aum -laum -I$(BASE_DIR) -I$(BASE_DIR)/aum/backend -o $@.out $(OPTS)
 
-performance:
-	cd performance; make
-
-vector:
-	cd vector; make
-
-scalar:
-	cd scalar; make
+svm: svm.cpp ml
+	$(CHARMC) $< -L$(LIBS_DIR)/aum -laum -I$(BASE_DIR) -I$(BASE_DIR)/aum/backend -o $@.out $(OPTS)
 
 clean:
-	cd blas; make clean
-	cd matrix; make clean
-	cd vector; make clean
-	cd performance; make clean
-	cd scalar; make clean
+	rm *.decl.h *.def.h *.out charmrun

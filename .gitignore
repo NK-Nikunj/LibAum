@@ -62,3 +62,8 @@ charmrun
 .vscode
 
 Makefile.common
+
+# Profiling data
+*.sts
+*.log.gz
+*.projrc

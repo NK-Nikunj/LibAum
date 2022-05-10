@@ -22,9 +22,7 @@
 #include <aum/util/generator.hpp>
 #include <aum/util/view.hpp>
 
-struct part_vector_msg
-  : public CkMcastBaseMsg
-  , public CMessage_part_vector_msg
+struct part_vector_msg : public CMessage_part_vector_msg
 {
     int red_count;
     int size;

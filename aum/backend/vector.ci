@@ -803,6 +803,125 @@ module Vector
                             ++WRITE_TAG;
                         }
                     }
+
+                    ////////////////////////////////////////////////////////////
+                    // Sigmoid Operation                                      //
+                    ////////////////////////////////////////////////////////////
+                    when sigmoid[WRITE_TAG](int write_tag)
+                    {
+                        serial "sigmoid"
+                        {
+                            using evec_t = Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>>;
+
+                            evec_t e(vec.data(), vec.size());
+
+                            e.unaryExpr([](double z) { return 1 / (1 + std::exp(-z)); });
+
+                            // Operation is now complete - set up read facility
+                            // on this data.
+                            ++WRITE_TAG;
+                            READ_TAG = WRITE_TAG + 1;
+                        }
+                    }
+
+                    when scalar_divide[WRITE_TAG](int write_tag, double value)
+                    {
+                        serial "scalar_divide"
+                        {
+                            using evec_t = Eigen::Map<Eigen::Matrix<double, 1, Eigen::Dynamic>>;
+                            evec_t e(vec.data(), vec.size());
+
+                            e /= value;
+
+                            // Operation is now complete - set up read facility
+                            // on this data.
+                            ++WRITE_TAG;
+                            READ_TAG = WRITE_TAG + 1;
+                        }
+                    }
+
+                    when
+                        perceptron[WRITE_TAG](int write_tag, double lr),
+                        input_vector_1[WRITE_TAG](vector_msg* msg1),
+                        input_vector_2[WRITE_TAG](vector_msg* msg2)
+                    {
+                        serial "perceptron"
+                        {
+                            using evec_t = Eigen::Map<Eigen::Array<double, 1, Eigen::Dynamic>>;
+
+                            evec_t e1(msg1->arr, msg1->size);
+                            evec_t e2(msg2->arr, msg2->size);
+
+                            evec_t e(vec.data(), vec.size());
+
+                            for (int i = 0; i != vec.size(); ++i)
+                                if (e1[i] * e[i] <= 0)
+                                    e[i] += lr * e2[i];
+
+                            // Operation is now complete - set up read facility
+                            // on this data.
+                            ++WRITE_TAG;
+                            READ_TAG = WRITE_TAG + 1;
+
+                            // Pointers were shared!
+                            if (!msg1->cb.isInvalid())
+                                msg1->cb.send();
+
+                            // Pointers were shared!
+                            if (!msg2->cb.isInvalid())
+                                msg2->cb.send();
+                        }
+                    }
+
+                    when
+                        svm[WRITE_TAG](int write_tag, double lr),
+                        input_vector_1[WRITE_TAG](vector_msg* msg1),
+                        input_vector_2[WRITE_TAG](vector_msg* msg2)
+                    {
+                        serial "svm"
+                        {
+                            using evec_t = Eigen::Map<Eigen::Array<double, 1, Eigen::Dynamic>>;
+
+                            evec_t e1(msg1->arr, msg1->size);
+                            evec_t e2(msg2->arr, msg2->size);
+
+                            evec_t e(vec.data(), vec.size());
+
+                            for (int i = 0; i != vec.size(); ++i)
+                                if (e1[i] * e[i] <= 1)
+                                    e[i] += lr * (e2[i] - e[i]);
+                                else
+                                    e[i] -= lr * e[i];
+
+                            // Operation is now complete - set up read facility
+                            // on this data.
+                            ++WRITE_TAG;
+                            READ_TAG = WRITE_TAG + 1;
+
+                            // Pointers were shared!
+                            if (!msg1->cb.isInvalid())
+                                msg1->cb.send();
+
+                            // Pointers were shared!
+                            if (!msg2->cb.isInvalid())
+                                msg2->cb.send();
+                        }
+                    }
+
+                    when wait[WRITE_TAG](int write_tag, ck::future<int> f)
+                    {
+                        serial "wait"
+                        {
+                            f.set(1);
+
+                            // Operation is now complete - set up read facility
+                            // on this data.
+                            ++WRITE_TAG;
+                            READ_TAG = WRITE_TAG + 1;
+
+
+                        }
+                    }
                 }
             }
         }
@@ -842,5 +961,12 @@ module Vector
         entry void wait_one(int, ck::future<bool>);
 
         entry void gather_vector(int, CProxy_vector_container);
+
+        entry void sigmoid(int);
+        entry void scalar_divide(int, double);
+
+        entry void perceptron(int, double);
+        entry void svm(int, double);
+        entry void wait(int, ck::future<int>);
     }
 }

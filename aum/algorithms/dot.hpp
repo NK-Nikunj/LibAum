@@ -139,4 +139,15 @@ namespace aum {
         return result;
     }
 
+    aum::vector dot_transpose(aum::vector const& v1, aum::matrix const& m1)
+    {
+        return dot(m1, v1);
+    }
+
+    aum::vector dot_transpose(aum::matrix const& m1, aum::vector const& v1)
+    {
+        return dot(v1, m1);
+    }
+    
+
 }    // namespace aum

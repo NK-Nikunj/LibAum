@@ -27,6 +27,14 @@ namespace aum {
     class vector
     {
     public:
+        explicit vector()
+          : size_(0)
+          , num_chares_(0)
+          , read_tag_(0)
+          , write_tag_(0)
+        {
+        }
+
         explicit vector(int size)
           : size_(size)
           , num_chares_(size_ / aum::sizes::array_size::value)
@@ -128,6 +136,73 @@ namespace aum {
             return *this;
         }
 
+        void init(int size)
+        {
+            assert(size_ == 0 && "Initializing a pre-existing vector");
+
+            size_ = size;
+            num_chares_ = size_ / aum::sizes::array_size::value;
+
+            if (size_ % aum::sizes::array_size::value)
+                ++num_chares_;
+
+            proxy_ = CProxy_Vector::ckNew(size_, num_chares_, num_chares_);
+        }
+
+        void init(int size, double value)
+        {
+            assert(size_ == 0 && "Initializing a pre-existing vector");
+
+            size_ = size;
+            num_chares_ = size_ / aum::sizes::array_size::value;
+
+            if (size_ % aum::sizes::array_size::value)
+                ++num_chares_;
+
+            proxy_ =
+                CProxy_Vector::ckNew(size_, value, num_chares_, num_chares_);
+        }
+
+        void wait()
+        {
+            int w_tag = write_tag();
+            ck::future<int> f;
+            proxy_.wait(w_tag, f);
+            f.get();
+            update_tags();
+
+            return;
+        }
+
+        void sigmoid()
+        {
+            int w_tag = write_tag();
+            proxy_.sigmoid(w_tag);
+            update_tags();
+        }
+
+        void perceptron(
+            aum::vector const& vdot, aum::vector const& y_train, double lr)
+        {
+            int w_tag = write_tag();
+
+            vdot.send_to_1(w_tag, *this);
+            y_train.send_to_2(w_tag, *this);
+
+            proxy_.perceptron(w_tag, lr);
+            update_tags();
+        }
+
+        void svm(aum::vector const& vdot, aum::vector const& y_train, double lr)
+        {
+            int w_tag = write_tag();
+
+            vdot.send_to_1(w_tag, *this);
+            y_train.send_to_2(w_tag, *this);
+
+            proxy_.svm(w_tag, lr);
+            update_tags();
+        }
         vector copy() const
         {
             vector dest{size_};
