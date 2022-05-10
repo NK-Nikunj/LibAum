@@ -82,7 +82,7 @@ logit.predict(X_test)
 
 end = t.time()
 
-print(f'Execution time {end-start}s')
+print(f'NumPy Execution time {end-start}s')
 
 import torch
 

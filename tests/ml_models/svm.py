@@ -37,45 +37,4 @@ logit.predict(X_test)
 
 end = t.time()
 
-print(f'Execution time {end-start}s')
-
-import torch
-
-class SVM(torch.nn.Module):
-    def __init__(self, input_dim, output_dim):
-        super(SVM, self).__init__()
-        self.linear = torch.nn.Linear(input_dim, output_dim)
-        
-    def forward(self, x):
-        outputs = torch.sigmoid(self.linear(x))
-        return outputs
-
-start = t.time()
-
-model = SVM(100, 1)
-
-criterion = torch.nn.BCELoss()
-
-optimizer = torch.optim.SGD(model.parameters(), lr=lr)
-
-X_train, X_test = torch.Tensor(X_train),torch.Tensor(X_test)
-y_train = torch.Tensor(y_train)
-
-losses = []
-losses_test = []
-Iterations = []
-iter = 0
-for epoch in range(iters):
-    x = X_train
-    labels = y_train
-    optimizer.zero_grad() # Setting our stored gradients equal to zero
-    outputs = model(X_train)
-    loss = criterion(torch.squeeze(outputs), labels) # [200,1] -squeeze-> [200]
-    
-    loss.backward() # Computes the gradient of the given tensor w.r.t. graph leaves 
-    
-    optimizer.step() # Updates weights and biases with the optimizer (SGD)
-
-end = t.time()
-
-print(f'PyTorch Execution time {end-start}s')
+print(f'NumPy Execution time {end-start}s')
